@@ -27,4 +27,5 @@ func InitBookRouter(rg *gin.RouterGroup, db *sql.DB, validator *validation.Valid
 	rg.GET("/", middleware.JwtMiddleware(), bookCtrl.GetAllBooks)
 	rg.GET("/:id", middleware.JwtMiddleware(), bookCtrl.GetBookByID)
 	rg.DELETE("/:id", middleware.JwtMiddleware(), bookCtrl.DeleteBook)
+	rg.PUT("/:id", middleware.JwtMiddleware(), bookCtrl.UpdateBook)
 }

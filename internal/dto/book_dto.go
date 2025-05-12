@@ -36,3 +36,24 @@ type ReqCreateBookSwagger struct {
     TotalPage   int    `json:"total_page"`
     CategoryID  *int   `json:"category_id"`
 }
+
+type ReqUpdateBook struct {
+	Title       string `json:"title" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	ImageURL    string `json:"image_url" validate:"required"`
+	ReleaseYear int    `json:"release_year" validate:"required"`
+	Price       int    `json:"price" validate:"required"`
+	TotalPage   int    `json:"total_page" validate:"required"`
+	Thickness   *string `json:"thickness"`
+	CategoryID  *int   `json:"category_id"`
+}
+
+type ReqUpdateBookSwagger struct {
+	Title       string `json:"title" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	ImageURL    string `json:"image_url" validate:"required"`
+	ReleaseYear int    `json:"release_year" validate:"required"`
+	Price       int    `json:"price" validate:"required"`
+	TotalPage   int    `json:"total_page" validate:"required"`
+	CategoryID  *int   `json:"category_id"`
+}

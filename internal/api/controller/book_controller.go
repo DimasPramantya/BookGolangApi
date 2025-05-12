@@ -142,3 +142,51 @@ func (bc *bookController) DeleteBook(ctx *gin.Context) {
 
 	helper.WriteResponse(ctx, http.StatusOK, "Book deleted successfully", nil)
 }
+
+// UpdateBook godoc
+// @Summary     Update Book Entity
+// @Description Update a book by ID
+// @Tags        book
+// @Param       id path int true "Book ID"
+// @Param       request body dto.ReqUpdateBookSwagger true "Update Book Payload"
+// @Produce     json
+// @Success     200 {object} dto.ResBook
+// @Failure     400 {object} dto.ErrorResponse
+// @Failure     404 {object} dto.ErrorResponse
+// @Security    BearerAuth
+// @Router      /books/{id} [put]
+func (bc *bookController) UpdateBook(ctx *gin.Context) {
+	id := ctx.Param("id")
+	bookID, err := strconv.Atoi(id)
+	if err != nil {
+		helper.WriteError(ctx, http.StatusBadRequest, "Invalid ID format", nil)
+		return
+	}
+
+	var req dto.ReqUpdateBook
+	err = bc.validator.ValidateRequest(ctx, &req)
+	if err != nil {
+		return
+	}
+
+	username, _ := ctx.Get("username")
+	book, err := bc.bookUC.Update(bookID, req, username.(string))
+	if err != nil {
+		if err == domain.ErrNotFound {
+			helper.WriteError(ctx, http.StatusNotFound, "Book not found", nil)
+			return
+		}
+		if err == domain.ErrTotalPageNotValid {
+			helper.WriteError(ctx, http.StatusBadRequest, err.Error(), nil)
+			return
+		}
+		if err == domain.ErrReleaseYearNotValid {
+			helper.WriteError(ctx, http.StatusBadRequest, err.Error(), nil)
+			return
+		}
+		helper.WriteError(ctx, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+
+	helper.WriteResponse(ctx, http.StatusOK, "Book updated successfully", book)
+}

@@ -22,14 +22,14 @@ func NewBookService(
 }
 
 func (b *bookService) Create(book dto.ReqCreateBook, username string) (*dto.ResBook, error) {
-	
-	if(book.TotalPage >= 100){
+
+	if book.TotalPage >= 100 {
 		thickness := "thick"
 		book.Thickness = &thickness
-	}else if (book.TotalPage < 100 && book.TotalPage >= 0){
+	} else if book.TotalPage < 100 && book.TotalPage >= 0 {
 		thickness := "thin"
 		book.Thickness = &thickness
-	}else{
+	} else {
 		return nil, domain.ErrTotalPageNotValid
 	}
 
@@ -37,7 +37,7 @@ func (b *bookService) Create(book dto.ReqCreateBook, username string) (*dto.ResB
 		return nil, domain.ErrReleaseYearNotValid
 	}
 
-	if book.CategoryID != nil {	
+	if book.CategoryID != nil {
 		category, err := b.categoryRepo.FindByID(*book.CategoryID)
 		if err != nil {
 			return nil, err
@@ -65,6 +65,59 @@ func (b *bookService) Create(book dto.ReqCreateBook, username string) (*dto.ResB
 	}
 
 	result := mapToResBook(newBook)
+
+	return &result, nil
+}
+
+func (b *bookService) Update(id int, book dto.ReqUpdateBook, username string) (*dto.ResBook, error) {
+	bookFromDB, err := b.bookRepo.FindByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if bookFromDB == nil {
+		return nil, domain.ErrNotFound
+	}
+
+	if book.TotalPage >= 100 {
+		thickness := "thick"
+		book.Thickness = &thickness
+	} else if book.TotalPage < 100 && book.TotalPage >= 0 {
+		thickness := "thin"
+		book.Thickness = &thickness
+	} else {
+		return nil, domain.ErrTotalPageNotValid
+	}
+
+	if book.ReleaseYear > 2024 || book.ReleaseYear < 1980 {
+		return nil, domain.ErrReleaseYearNotValid
+	}
+
+	if book.CategoryID != nil {
+		category, err := b.categoryRepo.FindByID(*book.CategoryID)
+		if err != nil {
+			return nil, err
+		}
+		if category == nil {
+			return nil, domain.ErrNotFound
+		}
+	}
+
+	bookFromDB.Title = book.Title
+	bookFromDB.Description = book.Description
+	bookFromDB.ImageURL = book.ImageURL
+	bookFromDB.ReleaseYear = book.ReleaseYear
+	bookFromDB.Price = book.Price
+	bookFromDB.TotalPage = book.TotalPage
+	bookFromDB.Thickness = *book.Thickness
+	bookFromDB.CategoryID = book.CategoryID
+	bookFromDB.ModifiedBy = &username
+
+	err = b.bookRepo.Update(bookFromDB)
+	if err != nil {
+		return nil, err
+	}
+
+	result := mapToResBook(*bookFromDB)
 
 	return &result, nil
 }

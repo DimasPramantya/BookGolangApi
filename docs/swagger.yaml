@@ -60,6 +60,30 @@ definitions:
     - password
     - username
     type: object
+  dto.ReqUpdateBookSwagger:
+    properties:
+      category_id:
+        type: integer
+      description:
+        type: string
+      image_url:
+        type: string
+      price:
+        type: integer
+      release_year:
+        type: integer
+      title:
+        type: string
+      total_page:
+        type: integer
+    required:
+    - description
+    - image_url
+    - price
+    - release_year
+    - title
+    - total_page
+    type: object
   dto.ResBook:
     properties:
       category_id:
@@ -241,6 +265,40 @@ paths:
       summary: Get Book By ID
       tags:
       - book
+    put:
+      description: Update a book by ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Book Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ReqUpdateBookSwagger'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResBook'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Book Entity
+      tags:
+      - book
   /categories:
     get:
       description: Retrieves a list of categories
@@ -392,7 +450,7 @@ paths:
       - BearerAuth: []
       summary: Get books by category ID
       tags:
-      - book
+      - category
   /users/login:
     post:
       description: User login

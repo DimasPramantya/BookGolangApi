@@ -172,7 +172,7 @@ func (cc *categoryController) UpdateCategory(ctx *gin.Context) {
 // GetBooksByCategoryID godoc
 // @Summary     Get books by category ID
 // @Description Retrieves a list of books in a specific category
-// @Tags        book
+// @Tags        category
 // @Param       id path int true "Category ID"
 // @Produce     json
 // @Success     200 {array} dto.ResBook

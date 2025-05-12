@@ -36,4 +36,5 @@ type BookUsecase interface {
 	GetAll() ([]dto.ResBook, error)
 	Create(book dto.ReqCreateBook, username string) (*dto.ResBook, error)
 	Delete(id int) error
+	Update(id int, book dto.ReqUpdateBook, username string) (*dto.ResBook, error)
 }
