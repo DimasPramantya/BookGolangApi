@@ -84,10 +84,10 @@ func (us *UserService) Register(req dto.ReqRegister) error {
 func (u *UserService) GetProfile(id int) (*dto.ResUser, error) {
 	user, err := u.userRepo.FindByID(id)
 	if err != nil {
+		if err == domain.ErrNotFound {
+			return nil, domain.ErrNotFound
+		}
 		return nil, fmt.Errorf("failed to get user profile: %w", err)
-	}
-	if user == nil {
-		return nil, domain.ErrNotFound
 	}
 	return &dto.ResUser{
 		ID:       user.ID,
